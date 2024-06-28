@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://b4dap2oypf3ah"]
+
+[ext_resource type="Script" path="res://Prefabs/CubePiece.gd" id="1_5kktr"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_j47bc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2m4mu"]
+albedo_color = Color(0, 0, 0, 1)
+metallic = 0.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_63wk5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h3x6a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bjeht"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_110f7"]
+albedo_color = Color(1, 0.368627, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e6hr0"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5b78"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6elm7"]
+albedo_color = Color(1, 1, 0, 1)
+
+[node name="Cube" type="MeshInstance3D" node_paths=PackedStringArray("UpPlane", "DownPlane", "FrontPlane", "BackPlane", "LeftPlane", "RightPlane")]
+mesh = SubResource("BoxMesh_j47bc")
+surface_material_override/0 = SubResource("StandardMaterial3D_2m4mu")
+script = ExtResource("1_5kktr")
+UpPlane = NodePath("Plane1")
+DownPlane = NodePath("Plane6")
+FrontPlane = NodePath("Plane4")
+BackPlane = NodePath("Plane5")
+LeftPlane = NodePath("Plane3")
+RightPlane = NodePath("Plane2")
+
+[node name="Plane1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.51, 0)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+surface_material_override/0 = SubResource("StandardMaterial3D_h3x6a")
+
+[node name="Plane2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.45, 0, 0, 0, -1.96701e-08, -0.45, 0, 0.45, -1.96701e-08, 0, 0, 0.51)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+surface_material_override/0 = SubResource("StandardMaterial3D_bjeht")
+
+[node name="Plane3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.45, 0, 0, 0, -1.96701e-08, 0.45, 0, -0.45, -1.96701e-08, 0, 0, -0.51)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_110f7")
+
+[node name="Plane4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1.96701e-08, 0.45, -1.96701e-08, 0, -1.96701e-08, -0.45, -0.45, -1.96701e-08, 8.59808e-16, 0.51, 0, 0)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_e6hr0")
+
+[node name="Plane5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1.96701e-08, -0.45, 1.96701e-08, 0, -1.96701e-08, -0.45, 0.45, -1.96701e-08, 8.59808e-16, -0.51, 0, 0)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_n5b78")
+
+[node name="Plane6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.45, 0, 0, 0, -0.45, 3.93403e-08, 0, -3.93403e-08, -0.45, 0, -0.51, 0)
+visible = false
+mesh = SubResource("PlaneMesh_63wk5")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_6elm7")

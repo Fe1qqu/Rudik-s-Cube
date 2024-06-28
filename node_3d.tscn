@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://do3tmvh51gxgn"]
+
+[ext_resource type="Script" path="res://Cube.gd" id="1_h5kdv"]
+[ext_resource type="Script" path="res://Camera3D.gd" id="1_j3jc7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2flnn"]
+sky_top_color = Color(0.247399, 0.451518, 0.72176, 1)
+sky_curve = 0.0568394
+ground_curve = 35.6578
+
+[sub_resource type="Sky" id="Sky_vdcye"]
+sky_material = SubResource("ProceduralSkyMaterial_2flnn")
+process_mode = 1
+
+[sub_resource type="Environment" id="Environment_nc5xe"]
+background_mode = 2
+background_color = Color(0.0862745, 0.443137, 1, 1)
+sky = SubResource("Sky_vdcye")
+glow_intensity = 4.53
+glow_strength = 2.0
+glow_bloom = 0.95
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_nc5xe")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+fov = 90.0
+script = ExtResource("1_j3jc7")
+
+[node name="Cube" type="MeshInstance3D" parent="."]
+script = ExtResource("1_h5kdv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, -0.5, -0.5, -5, -5, -5)
