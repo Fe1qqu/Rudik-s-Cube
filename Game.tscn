@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://do3tmvh51gxgn"]
 
-[ext_resource type="Script" path="res://Camera.gd" id="1_aksja"]
-[ext_resource type="Script" path="res://Cube.gd" id="1_h5kdv"]
+[ext_resource type="Script" path="res://Camera.gd" id="1_of6j4"]
+[ext_resource type="Script" path="res://Cube.gd" id="2_x3oar"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2flnn"]
 sky_top_color = Color(0.247399, 0.451518, 0.72176, 1)
@@ -30,10 +30,10 @@ environment = SubResource("Environment_nc5xe")
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.10637, -17.712)
 fov = 90.0
-script = ExtResource("1_aksja")
+script = ExtResource("1_of6j4")
 
 [node name="Cube" type="MeshInstance3D" parent="."]
-script = ExtResource("1_h5kdv")
+script = ExtResource("2_x3oar")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
