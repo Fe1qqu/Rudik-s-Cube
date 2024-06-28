@@ -1,27 +1,30 @@
 extends MeshInstance3D
+class_name CubePiece
 
-# Указываем узлы для каждой плоскости
-@export var UpPlane: MeshInstance3D
-@export var DownPlane: MeshInstance3D
-@export var FrontPlane: MeshInstance3D
-@export var BackPlane: MeshInstance3D
-@export var LeftPlane: MeshInstance3D
-@export var RightPlane: MeshInstance3D
+@export var planes: Array[MeshInstance3D]
 
 # Функция для установки видимости плоскостей в зависимости от координат
-func SetColor(x: int, y: int, z: int):
+func set_color(x: int, y: int, z: int) -> void:
 	# Активируем соответствующую плоскость в зависимости от координат
 	if y == 0:
-		UpPlane.visible = true
+		planes[0].visible = true
 	elif y == -2:
-		DownPlane.visible = true
+		planes[1].visible = true
 
 	if z == 0:
-		LeftPlane.visible = true
+		planes[2].visible = true
 	elif z == 2:
-		RightPlane.visible = true
-#
+		planes[3].visible = true
+
 	if x == 0:
-		FrontPlane.visible = true
+		planes[4].visible = true
 	elif x == -2:
-		BackPlane.visible = true
+		planes[5].visible = true
+
+# Функция для получения активных плоскостей
+func get_active_planes() -> Array[MeshInstance3D]:
+	var active_planes: Array[MeshInstance3D] = []
+	for plane in planes:
+		if plane.visible:
+			active_planes.append(plane)
+	return active_planes
