@@ -3,12 +3,14 @@ extends Camera3D
 # Скорость вращения камеры
 const ROTATION_SPEED: float = 0.01
 
+# Плавность интерполяции
+const ROTATION_SMOOTHNESS = 30.0
+
+var current_rotation: Quaternion = Quaternion.IDENTITY
+var target_rotation: Quaternion = Quaternion.IDENTITY
+
 # Длинна луча
 const RAY_LENGTH = 100
-
-# Угол поворота камеры по азимуту (вдоль горизонтали) и по зениту (вдоль вертикали)
-var azimuth: float = PI / 4
-var zenith: float = PI / 4
 
 # Флаг для отслеживания состояния нажатия кнопок мыши
 var lmb_mouse_pressed: bool = false
@@ -26,6 +28,7 @@ var planes: Array[MeshInstance3D] = []
 
 func _ready():
 	update_camera_position()
+
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -48,6 +51,7 @@ func _input(event):
 			rotate_camera(event)
 		elif lmb_mouse_pressed:
 			process_mouse_motion()
+
 
 # Обработка клика мыши
 func process_mouse_click():
@@ -87,29 +91,37 @@ func ray_cast() -> Dictionary:
 
 	return space_state.intersect_ray(query)
 
+
 # Сброс выбранных объектов и состояния камеры
 func reset_selection():
 	pieces.clear()
 	planes.clear()
 
+
 # Обработка вращения камеры
 func rotate_camera(event):
-	azimuth -= event.relative.x * ROTATION_SPEED
-	zenith -= event.relative.y * -ROTATION_SPEED
+	var is_upside_down = (current_rotation * Vector3.UP).y < 0
+	
+	var yaw_rotation = Quaternion(Vector3.UP, (event.relative.x if not is_upside_down else -event.relative.x) * -ROTATION_SPEED)
+	var pitch_rotation = Quaternion(Vector3.RIGHT, event.relative.y * -ROTATION_SPEED)
 
-	# Ограничение на угол вращения камеры по вертикали
-	zenith = clamp(zenith, -1.5, 1.5)
+	# Обновляем целевую ориентацию (yaw -> текущая -> pitch)
+	target_rotation = (yaw_rotation * current_rotation * pitch_rotation).normalized()
+
+
+func _process(delta):
+	# Плавная интерполяция между текущей и целевой ориентацией
+	current_rotation = current_rotation.slerp(target_rotation, delta * ROTATION_SMOOTHNESS)
 
 	update_camera_position()
 
 
 func update_camera_position() -> void:
-	# Преобразование углов в декартовы координаты
-	var x = distance * cos(zenith) * sin(azimuth)
-	var y = distance * sin(zenith)
-	var z = distance * cos(zenith) * cos(azimuth)
+	# Расчет направления "вперед" через кватернион
+	var forward_vector = current_rotation * Vector3(0, 0, -1)
 
-	# Установка нового положения камеры
-	global_transform.origin = center_offset + Vector3(x, y, z)
+	# Установка положения камеры
+	global_transform.origin = center_offset - forward_vector * distance
 
-	look_at(center_offset, Vector3(0, 1, 0))
+	# Установка ориентации камеры
+	global_transform.basis = Basis(current_rotation)
