@@ -1,0 +1,28 @@
+<lint-module
+    format="1"
+    dir="D:\Projects\Godot\Rudik&apos;s Cube\android\build"
+    name=":"
+    type="APP"
+    maven=":build:"
+    agpVersion="8.2.0"
+    buildFolder="build"
+    bootClassPath="E:\Programs\Android\sdk\platforms\android-34\android.jar;E:\Programs\Android\sdk\build-tools\34.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      disable="MissingTranslation,UnusedResources"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true">
+    <severities>
+      <severity
+        id="MissingTranslation"
+        severity="IGNORE" />
+      <severity
+        id="UnusedResources"
+        severity="IGNORE" />
+    </severities>
+  </lintOptions>
+  <variant name="release"/>
+</lint-module>

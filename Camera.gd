@@ -1,7 +1,7 @@
 extends Camera3D
 
 # Скорость вращения камеры
-const ROTATION_SPEED: float = 0.01
+const ROTATION_SPEED: float = 0.005
 
 # Плавность интерполяции
 const ROTATION_SMOOTHNESS = 30.0
@@ -15,6 +15,14 @@ const RAY_LENGTH = 100
 # Флаг для отслеживания состояния нажатия кнопок мыши
 var lmb_mouse_pressed: bool = false
 var rmb_mouse_pressed: bool = false
+
+# Время между двойными тапами
+const DOUBLE_TAP_TIME = 0.3  # Интервал для распознавания двойного тапа (в секундах)
+
+var is_rotating: bool = false
+var last_input_position: Vector2 = Vector2.ZERO
+var last_tap_time: float = 0.0  # Время последнего тапа
+var has_double_tapped: bool = false  # Флаг для двойного тапа
 
 # Расстояние камеры от центра сцены
 var distance: float = 6.0
@@ -46,11 +54,25 @@ func _input(event):
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			rmb_mouse_pressed = event.pressed
 
-	elif event is InputEventMouseMotion:
+	elif event is InputEventMouseMotion and !has_double_tapped:
 		if rmb_mouse_pressed:
 			rotate_camera(event)
 		elif lmb_mouse_pressed:
 			process_mouse_motion()
+			
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			var now = Time.get_ticks_msec() / 1000.0  # Получаем время в секундах
+			if now - last_tap_time <= DOUBLE_TAP_TIME:
+				has_double_tapped = true
+			else:
+				has_double_tapped = false
+			last_tap_time = now
+			last_input_position = event.position
+
+	elif event is InputEventScreenDrag and has_double_tapped:
+		rotate_camera(event)
+
 
 
 # Обработка клика мыши

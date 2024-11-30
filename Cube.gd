@@ -42,7 +42,7 @@ func create_cube() -> void:
 
 # direction - направление вращения (1 для по часовой, -1 для против часовой)
 func rotate_layer(pieces: Array[MeshInstance3D], rotation_vector: Vector3, 
-				  direction: int = 1, rotate_angle: int = 5) -> void:
+				  direction: int = 1, rotate_angle: int = 30) -> void:
 	can_rotate = false
 
 	var total_angle: int = 0
