@@ -17,9 +17,6 @@ var rmb_mouse_pressed: bool = false
 # Расстояние камеры от центра сцены
 var distance: float = 6.0
 
-# Центр вращения
-var center_offset: Vector3 = Vector3(-1, -1, 1)
-
 var pieces: Array[MeshInstance3D] = []
 var planes: Array[MeshInstance3D] = []
 @onready var cube: MeshInstance3D = $"../Cube"
@@ -108,9 +105,9 @@ func update_camera_position() -> void:
 	var y = distance * sin(zenith)
 	var z = distance * cos(zenith) * cos(azimuth)
 	
-	position = center_offset + Vector3(x, y, z)
+	position = Vector3(x, y, z)
 	
 	if abs(zenith) >= PI / 2:
-		look_at(center_offset, Vector3.DOWN)
+		look_at(Vector3.ZERO, Vector3.DOWN)
 	else:
-		look_at(center_offset, Vector3.UP)
+		look_at(Vector3.ZERO, Vector3.UP)
