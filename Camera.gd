@@ -3,14 +3,19 @@ extends Camera3D
 # Скорость вращения камеры
 const ROTATION_SPEED: float = 0.01
 
-# Угол поворота камеры по азимуту (вдоль горизонтали) и по зениту (вдоль вертикали)
-var azimuth: float = PI / 4
-var zenith: float = PI / 4
+# Ускорение вращения камеры
+const ACCELERATION_SPEED: float = 10.0
+
+# Максимальное значение изменения координат мыши при повороте за кадр
+const MAX_DELTA: float = 20.0
+
+# Поворот камеры
+var local_rotation: Vector3 = Vector3(PI / 4, PI / 4, 0)
 
 # Длинна луча
 const RAY_LENGTH = 100
 
-# Флаг для отслеживания состояния нажатия кнопок мыши
+# Флаги для отслеживания состояния нажатия кнопок мыши
 var lmb_mouse_pressed: bool = false
 var rmb_mouse_pressed: bool = false
 
@@ -19,12 +24,14 @@ var distance: float = 6.0
 
 var pieces: Array[MeshInstance3D] = []
 var planes: Array[MeshInstance3D] = []
-@onready var cube: MeshInstance3D = $"../Cube"
+@onready var cube: MeshInstance3D = $"../../Cube"
 
-func _ready():
-	update_camera_position()
 
-func _input(event):
+func _process(delta: float) -> void:
+	update_camera_position(delta)
+
+
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			lmb_mouse_pressed = event.pressed
@@ -47,7 +54,7 @@ func _input(event):
 			process_mouse_motion()
 
 # Обработка клика мыши
-func process_mouse_click():
+func process_mouse_click() -> void:
 	var result = ray_cast()
 	
 	if result:
@@ -58,7 +65,7 @@ func process_mouse_click():
 		planes.append(hit_object)
 
 # Обработка движения мыши по кубику
-func process_mouse_motion():
+func process_mouse_motion() -> void:
 	var result = ray_cast()
 	
 	if result:
@@ -84,30 +91,24 @@ func ray_cast() -> Dictionary:
 	return space_state.intersect_ray(query)
 
 # Сброс выбранных объектов и состояния камеры
-func reset_selection():
+func reset_selection() -> void:
 	pieces.clear()
 	planes.clear()
 
 # Обработка вращения камеры
-func rotate_camera(event):
-	azimuth -= event.relative.x * ROTATION_SPEED * (-1 if abs(zenith) > PI / 2 else 1)
-	zenith -= event.relative.y * -ROTATION_SPEED
+func rotate_camera(event: InputEvent) -> void:
+	var delta_x = clamp(event.relative.x, -MAX_DELTA, MAX_DELTA)
+	var delta_y = clamp(event.relative.y, -MAX_DELTA, MAX_DELTA)
 	
-	zenith = wrapf(zenith, -PI, PI)
-	azimuth = wrapf(azimuth, -PI, PI)
+	local_rotation.x -= delta_x * ROTATION_SPEED * (-1 if abs(local_rotation.y) > PI / 2 else 1)
+	local_rotation.y -= delta_y * -ROTATION_SPEED
 	
-	update_camera_position()
+	local_rotation.x = wrapf(local_rotation.x, -PI, PI)
+	local_rotation.y = wrapf(local_rotation.y, -PI, PI)
 
 
-func update_camera_position() -> void:
-	# Преобразование углов в декартовы координаты
-	var x = distance * cos(zenith) * sin(azimuth)
-	var y = distance * sin(zenith)
-	var z = distance * cos(zenith) * cos(azimuth)
+func update_camera_position(delta: float) -> void:
+	var target_rotation: Quaternion = Quaternion.from_euler(Vector3(local_rotation.y, local_rotation.x, 0))
+	get_parent().quaternion = get_parent().quaternion.slerp(target_rotation, delta * ACCELERATION_SPEED)
 	
-	position = Vector3(x, y, z)
-	
-	if abs(zenith) >= PI / 2:
-		look_at(Vector3.ZERO, Vector3.DOWN)
-	else:
-		look_at(Vector3.ZERO, Vector3.UP)
+	#position.z = -distance

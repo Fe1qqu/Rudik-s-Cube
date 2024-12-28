@@ -20,15 +20,18 @@ glow_intensity = 4.53
 glow_strength = 2.0
 glow_bloom = 0.95
 
-[sub_resource type="BoxMesh" id="BoxMesh_vcjni"]
+[sub_resource type="BoxMesh" id="BoxMesh_8cop1"]
 
 [node name="Game" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_nc5xe")
 
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.10637, -17.712)
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(0.707107, 0.5, 0.5, 0, 0.707107, -0.707107, -0.707107, 0.5, 0.5, 0, 0, 0)
+
+[node name="Camera" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -6)
 fov = 90.0
 script = ExtResource("1_of6j4")
 
@@ -41,7 +44,5 @@ transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -
 [node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, -0.5, -0.5, -5, -5, -5)
 
-[node name="MeshInstance3D_debug" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.429399, 1)
-visible = false
-mesh = SubResource("BoxMesh_vcjni")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_8cop1")
