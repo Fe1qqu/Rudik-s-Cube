@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Rudik's Cube"
-run/main_scene="res://Game.tscn"
+run/main_scene="res://game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://icon.png"
