@@ -1,16 +1,15 @@
 extends Camera3D
 
-# Скорость вращения камеры
-const ROTATION_SPEED: float = 0.01
+# Скорость вращения
+const ROTATION_SPEED: float = 0.1
 
-# Ускорение вращения камеры
-const ACCELERATION_SPEED: float = 10.0
+# Вес интерполяции
+const INTERPOLATION_WEIGHT: float = 10.0
 
 # Максимальное значение изменения координат мыши при повороте за кадр
 const MAX_DELTA: float = 20.0
 
-# Поворот камеры
-var local_rotation: Vector3 = Vector3(PI / 4, PI / 4, 0)
+var target_rotation: Quaternion
 
 # Длинна луча
 const RAY_LENGTH = 100
@@ -19,7 +18,7 @@ const RAY_LENGTH = 100
 var lmb_mouse_pressed: bool = false
 var rmb_mouse_pressed: bool = false
 
-# Расстояние камеры от центра сцены
+# Расстояние камеры от центра сцены (кубика)
 var distance: float = 6.0
 
 var pieces: Array[MeshInstance3D] = []
@@ -42,18 +41,20 @@ func _input(event: InputEvent) -> void:
 			else:
 				if pieces.size() == 2:
 					cube.detect_rotate(pieces, planes)
-				reset_selection()
 				
+				reset_selection()
+		
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			rmb_mouse_pressed = event.pressed
 	
 	elif event is InputEventMouseMotion:
-		if rmb_mouse_pressed:
-			rotate_camera(event)
-		elif lmb_mouse_pressed:
+		if lmb_mouse_pressed:
 			process_mouse_motion()
+		elif rmb_mouse_pressed:
+			rotate_camera(event)
 
-# Обработка клика мыши
+
+# Обработка клика ЛКМ
 func process_mouse_click() -> void:
 	var result = ray_cast()
 	
@@ -64,7 +65,7 @@ func process_mouse_click() -> void:
 		pieces.append(parent_object)
 		planes.append(hit_object)
 
-# Обработка движения мыши по кубику
+# Обработка движения ЛКМ по кубику
 func process_mouse_motion() -> void:
 	var result = ray_cast()
 	
@@ -90,25 +91,27 @@ func ray_cast() -> Dictionary:
 	
 	return space_state.intersect_ray(query)
 
-# Сброс выбранных объектов и состояния камеры
+# Сброс выбранных объектов
 func reset_selection() -> void:
 	pieces.clear()
 	planes.clear()
 
-# Обработка вращения камеры
+# Обработка вращения
 func rotate_camera(event: InputEvent) -> void:
-	var delta_x = clamp(event.relative.x, -MAX_DELTA, MAX_DELTA)
-	var delta_y = clamp(event.relative.y, -MAX_DELTA, MAX_DELTA)
+	var rotation_x: float = clamp(event.relative.x, -MAX_DELTA, MAX_DELTA) * ROTATION_SPEED
+	var rotation_y: float = clamp(event.relative.y, -MAX_DELTA, MAX_DELTA) * -ROTATION_SPEED
+
+	var to_cube: Vector3 = cube.global_position - global_position
+	var right: Vector3 = basis.y.cross(to_cube).normalized()
+	var up: Vector3 = to_cube.cross(right).normalized()
 	
-	local_rotation.x -= delta_x * ROTATION_SPEED * (-1 if abs(local_rotation.y) > PI / 2 else 1)
-	local_rotation.y -= delta_y * -ROTATION_SPEED
+	var quaternion_x = Quaternion(up, rotation_x).normalized()
+	var quaternion_y = Quaternion(right, rotation_y).normalized()
 	
-	local_rotation.x = wrapf(local_rotation.x, -PI, PI)
-	local_rotation.y = wrapf(local_rotation.y, -PI, PI)
+	target_rotation = quaternion_y * quaternion_x * cube.quaternion
 
 
 func update_camera_position(delta: float) -> void:
-	var target_rotation: Quaternion = Quaternion.from_euler(Vector3(local_rotation.y, local_rotation.x, 0))
-	get_parent().quaternion = get_parent().quaternion.slerp(target_rotation, delta * ACCELERATION_SPEED)
-	
+	cube.quaternion = cube.quaternion.slerp(target_rotation, delta * INTERPOLATION_WEIGHT)
+
 	#position.z = -distance
