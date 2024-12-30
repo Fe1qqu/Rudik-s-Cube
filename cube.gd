@@ -1,6 +1,6 @@
 extends MeshInstance3D
 
-var cube_piece_pref: PackedScene = load("res://Prefabs/CubePiece.tscn")
+var cube_piece_pref: PackedScene = load("res://Prefabs/cube_piece.tscn")
 var all_cube_pieces: Array[MeshInstance3D] = []
 var rotation_vectors: Array[Vector3] = [Vector3(0, 1, 0), Vector3(0, -1, 0),
 										Vector3(1, 0, 0), Vector3(-1, 0, 0),
