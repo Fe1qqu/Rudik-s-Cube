@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://do3tmvh51gxgn"]
 
-[ext_resource type="Script" path="res://Camera.gd" id="1_of6j4"]
-[ext_resource type="Script" path="res://Cube.gd" id="2_x3oar"]
+[ext_resource type="Script" path="res://camera.gd" id="1_of6j4"]
+[ext_resource type="Script" path="res://cube.gd" id="2_x3oar"]
 
 [sub_resource type="Shader" id="Shader_wc25x"]
 code = "shader_type sky;
