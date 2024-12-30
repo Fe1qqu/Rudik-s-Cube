@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://b4dap2oypf3ah"]
 
-[ext_resource type="Script" path="res://Prefabs/CubePiece.gd" id="1_5kktr"]
+[ext_resource type="Script" path="res://Prefabs/cube_piece.gd" id="1_5kktr"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_j47bc"]
 
