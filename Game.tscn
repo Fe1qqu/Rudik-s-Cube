@@ -3,13 +3,59 @@
 [ext_resource type="Script" path="res://Camera.gd" id="1_of6j4"]
 [ext_resource type="Script" path="res://Cube.gd" id="2_x3oar"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2flnn"]
-sky_top_color = Color(0.247399, 0.451518, 0.72176, 1)
-sky_curve = 0.0568394
-ground_curve = 35.6578
+[sub_resource type="Shader" id="Shader_wc25x"]
+code = "shader_type sky;
+
+uniform bool background_dark = false;
+
+vec3 skybox_dark_srgb(vec3 dir) {
+    vec3 rgb = dir * 0.5 + vec3(0.5);
+    return vec3(0.05) + 0.20 * rgb;
+}
+
+vec3 skybox_light_srgb(vec3 dir) {
+    vec3 rgb = dir * 0.5 + vec3(0.5);
+    return vec3(0.7) + 0.20 * rgb;
+}
+
+float interleaved_gradient_noise(vec2 n) {
+    float f = 0.06711056 * n.x + 0.00583715 * n.y;
+    return fract(52.9829189 * fract(f));
+}
+
+vec3 dither_interleaved(vec3 rgb, float levels, vec4 frag_coord) {
+    float noise = interleaved_gradient_noise(frag_coord.xy);
+    noise = noise - 0.5;
+    return rgb + noise / (levels - 1.0);
+}
+
+vec3 linear_from_srgb(vec3 color) {
+	return mix(
+		pow((color.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)),
+		color.rgb * (1.0 / 12.92),
+		lessThan(color.rgb, vec3(0.04045))
+	);
+}
+
+void sky() {
+    vec3 rgb;
+    if (background_dark) {
+        rgb = skybox_dark_srgb(EYEDIR);
+    } else {
+        rgb = skybox_light_srgb(EYEDIR);
+    }
+
+    vec3 rgb_gamma_dithered = dither_interleaved(rgb, 256.0, FRAGCOORD);
+
+    COLOR = linear_from_srgb(rgb_gamma_dithered);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v68fe"]
+shader = SubResource("Shader_wc25x")
+shader_parameter/background_dark = false
 
 [sub_resource type="Sky" id="Sky_vdcye"]
-sky_material = SubResource("ProceduralSkyMaterial_2flnn")
+sky_material = SubResource("ShaderMaterial_v68fe")
 process_mode = 1
 
 [sub_resource type="Environment" id="Environment_nc5xe"]
@@ -20,29 +66,24 @@ glow_intensity = 4.53
 glow_strength = 2.0
 glow_bloom = 0.95
 
-[sub_resource type="BoxMesh" id="BoxMesh_8cop1"]
-
 [node name="Game" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_nc5xe")
 
 [node name="CameraPivot" type="Marker3D" parent="."]
-transform = Transform3D(0.707107, 0.5, 0.5, 0, 0.707107, -0.707107, -0.707107, 0.5, 0.5, 0, 0, 0)
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 0, 0)
 
 [node name="Camera" type="Camera3D" parent="CameraPivot"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 2.98023e-07, 0, -2.98023e-08, 1, 0, 0, 6)
 fov = 90.0
 script = ExtResource("1_of6j4")
 
 [node name="Cube" type="MeshInstance3D" parent="."]
 script = ExtResource("2_x3oar")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D_1" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
 
-[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D_2" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, -0.5, -0.5, -5, -5, -5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_8cop1")
