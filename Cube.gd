@@ -230,8 +230,8 @@ func get_front_horizontal_pieces() -> Array[MeshInstance3D]:
 
 
 func detect_left_middle_right_direction(pieces: Array) -> int:
-	var pos0 = pieces[0].global_transform.origin.round()
-	var pos1 = pieces[1].global_transform.origin.round()
+	var pos0 = pieces[0].transform.origin.round()
+	var pos1 = pieces[1].transform.origin.round()
 	
 	if pos1.y != pos0.y:
 		return pos0.y - pos1.y if pos0.x == -1 else pos1.y - pos0.y
@@ -240,8 +240,8 @@ func detect_left_middle_right_direction(pieces: Array) -> int:
 
 
 func detect_front_middle_back_direction(pieces: Array) -> int:
-	var pos0 = pieces[0].global_transform.origin.round()
-	var pos1 = pieces[1].global_transform.origin.round()
+	var pos0 = pieces[0].transform.origin.round()
+	var pos1 = pieces[1].transform.origin.round()
 	
 	if pos1.z != pos0.z:
 		return pos1.z - pos0.z if pos0.y == 1 else pos0.z - pos1.z
@@ -250,8 +250,8 @@ func detect_front_middle_back_direction(pieces: Array) -> int:
 
 
 func detect_up_middle_down_direction(pieces: Array) -> int:
-	var pos0 = pieces[0].global_transform.origin.round()
-	var pos1 = pieces[1].global_transform.origin.round()
+	var pos0 = pieces[0].transform.origin.round()
+	var pos1 = pieces[1].transform.origin.round()
 	
 	if pos1.z != pos0.z:
 		return pos1.z - pos0.z if pos0.x == -1 else pos0.z - pos1.z
