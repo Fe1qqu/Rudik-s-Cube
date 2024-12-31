@@ -168,16 +168,11 @@ func detect_side(planes: Array[MeshInstance3D], side: Array[MeshInstance3D]) -> 
 	var current_origin = plane.global_transform.origin
 	var direction = -global_normal.normalized()
 	
-	var query = PhysicsRayQueryParameters3D.new()
-	query.from = current_origin
-	query.to = current_origin + direction * 100
-	query.collide_with_areas = true
+	var query = PhysicsRayQueryParameters3D.create(current_origin, current_origin + direction * 100)
 	
-	# Получаем пересечение
 	var hit = space_state.intersect_ray(query)
 	
 	if hit:
-		# Получаем объект столкновения
 		var hit_object = hit["collider"].get_parent().get_parent()
 		if hit_object == center_piece:
 			return true

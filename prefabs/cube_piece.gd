@@ -5,7 +5,6 @@ class_name CubePiece
 
 # Функция для установки видимости плоскостей в зависимости от координат
 func set_color(x: int, y: int, z: int) -> void:
-	# Активируем соответствующую плоскость в зависимости от координат
 	if y == 1:
 		planes[0].visible = true
 	elif y == -1:
