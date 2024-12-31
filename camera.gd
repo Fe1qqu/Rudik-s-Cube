@@ -21,6 +21,11 @@ var rmb_mouse_pressed: bool = false
 # Расстояние камеры от центра сцены (кубика)
 var distance: float = 6.0
 
+# Zoom
+const ZOOM_SPEED: float = 0.5
+const MIN_DISTANCE: float = 3.0
+const MAX_DISTANCE: float = 20.0
+
 var pieces: Array[MeshInstance3D] = []
 var planes: Array[MeshInstance3D] = []
 @onready var cube: MeshInstance3D = $"../../Cube"
@@ -53,6 +58,10 @@ func _input(event: InputEvent) -> void:
 		elif rmb_mouse_pressed:
 			rotate_camera(event)
 
+	if Input.is_action_pressed("zoom_in"):
+		zoom_in()
+	elif Input.is_action_pressed("zoom_out"):
+		zoom_out()
 
 # Обработка клика ЛКМ
 func process_mouse_click() -> void:
@@ -87,14 +96,21 @@ func ray_cast() -> Dictionary:
 	var origin = project_ray_origin(mouse_position)
 	var end = origin + project_ray_normal(mouse_position) * RAY_LENGTH
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
-	query.collide_with_areas = true
-	
+
 	return space_state.intersect_ray(query)
 
 # Сброс выбранных объектов
 func reset_selection() -> void:
 	pieces.clear()
 	planes.clear()
+
+
+func zoom_in() -> void:
+	distance = max(MIN_DISTANCE, distance - ZOOM_SPEED)
+
+
+func zoom_out() -> void:
+	distance = min(MAX_DISTANCE, distance + ZOOM_SPEED)
 
 # Обработка вращения
 func rotate_camera(event: InputEvent) -> void:
@@ -113,5 +129,4 @@ func rotate_camera(event: InputEvent) -> void:
 
 func update_camera_position(delta: float) -> void:
 	cube.quaternion = cube.quaternion.slerp(target_rotation, delta * INTERPOLATION_WEIGHT)
-
-	#position.z = -distance
+	position.z = lerp(position.z, distance, delta * INTERPOLATION_WEIGHT)
