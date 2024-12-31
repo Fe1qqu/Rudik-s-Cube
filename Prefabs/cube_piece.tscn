@@ -33,81 +33,80 @@ albedo_color = Color(0, 1, 0, 1)
 mesh = SubResource("BoxMesh_j47bc")
 surface_material_override/0 = SubResource("StandardMaterial3D_2m4mu")
 script = ExtResource("1_5kktr")
-planes = [NodePath("Plane1"), NodePath("Plane2"), NodePath("Plane3"), NodePath("Plane4"), NodePath("Plane5"), NodePath("Plane6")]
+planes = [NodePath("WhitePlane"), NodePath("YellowPlane"), NodePath("OrangePlane"), NodePath("RedPlane"), NodePath("BluePlane"), NodePath("GreenPlane")]
 
-[node name="Plane1" type="MeshInstance3D" parent="."]
+[node name="WhitePlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.51, 0)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 surface_material_override/0 = SubResource("StandardMaterial3D_h3x6a")
 
-[node name="Area3D" type="Area3D" parent="Plane1"]
+[node name="StaticBody3D" type="StaticBody3D" parent="WhitePlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane1/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WhitePlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
 
-[node name="Plane2" type="MeshInstance3D" parent="."]
+[node name="YellowPlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.45, 0, 0, 0, -0.45, 3.93403e-08, 0, -3.93403e-08, -0.45, 0, -0.51, 0)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_6elm7")
 
-[node name="Area3D" type="Area3D" parent="Plane2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="YellowPlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane2/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="YellowPlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
 
-[node name="Plane3" type="MeshInstance3D" parent="."]
+[node name="OrangePlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.45, 0, 0, 0, -1.96701e-08, 0.45, 0, -0.45, -1.96701e-08, 0, 0, -0.51)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_110f7")
 
-[node name="Area3D" type="Area3D" parent="Plane3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="OrangePlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane3/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OrangePlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
 
-[node name="Plane4" type="MeshInstance3D" parent="."]
+[node name="RedPlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.45, 0, 0, 0, -1.96701e-08, -0.45, 0, 0.45, -1.96701e-08, 0, 0, 0.51)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 surface_material_override/0 = SubResource("StandardMaterial3D_bjeht")
 
-[node name="Area3D" type="Area3D" parent="Plane4"]
+[node name="StaticBody3D" type="StaticBody3D" parent="RedPlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane4/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RedPlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
 
-[node name="Plane5" type="MeshInstance3D" parent="."]
+[node name="BluePlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1.96701e-08, 0.45, -1.96701e-08, 0, -1.96701e-08, -0.45, -0.45, -1.96701e-08, 8.59808e-16, 0.51, 0, 0)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_e6hr0")
 
-[node name="Area3D" type="Area3D" parent="Plane5"]
+[node name="StaticBody3D" type="StaticBody3D" parent="BluePlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
-visible = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane5/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BluePlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
 
-[node name="Plane6" type="MeshInstance3D" parent="."]
+[node name="GreenPlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1.96701e-08, -0.45, 1.96701e-08, 0, -1.96701e-08, -0.45, 0.45, -1.96701e-08, 8.59808e-16, -0.51, 0, 0)
 visible = false
 mesh = SubResource("PlaneMesh_63wk5")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_n5b78")
 
-[node name="Area3D" type="Area3D" parent="Plane6"]
+[node name="StaticBody3D" type="StaticBody3D" parent="GreenPlane"]
 transform = Transform3D(2.3, 0, 0, 0, 0.01, 0, 0, 0, 2.3, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane6/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GreenPlane/StaticBody3D"]
 shape = SubResource("BoxShape3D_xumev")
