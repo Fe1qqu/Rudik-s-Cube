@@ -1,7 +1,7 @@
 extends Camera3D
 
 # Скорость вращения
-const ROTATION_SPEED: float = 0.1
+const ROTATION_SPEED: float = 0.01
 
 # Вес интерполяции
 const INTERPOLATION_WEIGHT: float = 10.0
@@ -9,7 +9,7 @@ const INTERPOLATION_WEIGHT: float = 10.0
 # Максимальное значение изменения координат мыши при повороте за кадр
 const MAX_DELTA: float = 20.0
 
-var target_rotation: Quaternion
+var local_rotation: Vector3
 
 # Длинна луча
 const RAY_LENGTH = 100
@@ -29,6 +29,11 @@ const MAX_DISTANCE: float = 20.0
 var pieces: Array[MeshInstance3D] = []
 var planes: Array[MeshInstance3D] = []
 @onready var cube: MeshInstance3D = $"../../Cube"
+@onready var camera_pivot: Marker3D = $".."
+
+
+func _ready() -> void:
+	local_rotation = Vector3(camera_pivot.rotation.y, camera_pivot.rotation.x, camera_pivot.rotation.z)
 
 
 func _process(delta: float) -> void:
@@ -114,19 +119,18 @@ func zoom_out() -> void:
 
 # Обработка вращения
 func rotate_camera(event: InputEvent) -> void:
-	var rotation_x: float = clamp(event.relative.x, -MAX_DELTA, MAX_DELTA) * ROTATION_SPEED
-	var rotation_y: float = clamp(event.relative.y, -MAX_DELTA, MAX_DELTA) * -ROTATION_SPEED
-
-	var to_cube: Vector3 = cube.global_position - global_position
-	var right: Vector3 = basis.y.cross(to_cube).normalized()
-	var up: Vector3 = to_cube.cross(right).normalized()
+	var delta_x: float = clamp(event.relative.x, -MAX_DELTA, MAX_DELTA)
+	var delta_y: float = clamp(event.relative.y, -MAX_DELTA, MAX_DELTA)
 	
-	var quaternion_x = Quaternion(up, rotation_x).normalized()
-	var quaternion_y = Quaternion(right, rotation_y).normalized()
+	local_rotation.x -= delta_x * ROTATION_SPEED * (-1 if abs(local_rotation.y) > PI / 2 else 1)
+	local_rotation.y -= delta_y * ROTATION_SPEED
 	
-	target_rotation = quaternion_y * quaternion_x * cube.quaternion
+	local_rotation.x = wrapf(local_rotation.x, -PI, PI)
+	local_rotation.y = wrapf(local_rotation.y, -PI, PI)
 
 
 func update_camera_position(delta: float) -> void:
-	cube.quaternion = cube.quaternion.slerp(target_rotation, delta * INTERPOLATION_WEIGHT)
+	var target_rotation: Quaternion = Quaternion.from_euler(Vector3(local_rotation.y, local_rotation.x, 0))
+	camera_pivot.quaternion = camera_pivot.quaternion.slerp(target_rotation, delta * INTERPOLATION_WEIGHT)
+	
 	position.z = lerp(position.z, distance, delta * INTERPOLATION_WEIGHT)
