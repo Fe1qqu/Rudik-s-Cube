@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://b4dap2oypf3ah"]
 
-[ext_resource type="Script" path="res://prefabs/cube_piece.gd" id="1_5kktr"]
+[ext_resource type="Script" uid="uid://cpexvafa2rwto" path="res://prefabs/cube_piece.gd" id="1_5kktr"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_j47bc"]
 
@@ -11,23 +11,29 @@ metallic = 0.5
 [sub_resource type="PlaneMesh" id="PlaneMesh_63wk5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h3x6a"]
+emission_enabled = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xumev"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6elm7"]
 albedo_color = Color(1, 1, 0, 1)
+emission_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_110f7"]
 albedo_color = Color(1, 0.368627, 0, 1)
+emission_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bjeht"]
 albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e6hr0"]
 albedo_color = Color(0, 0, 1, 1)
+emission_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5b78"]
 albedo_color = Color(0, 1, 0, 1)
+emission_enabled = true
 
 [node name="Cube" type="MeshInstance3D" node_paths=PackedStringArray("planes")]
 mesh = SubResource("BoxMesh_j47bc")
