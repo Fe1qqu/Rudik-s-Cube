@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://do3tmvh51gxgn"]
 
-[ext_resource type="Script" path="res://camera.gd" id="1_yoqpr"]
-[ext_resource type="Script" path="res://cube.gd" id="2_6bvn0"]
+[ext_resource type="Script" uid="uid://dqt54qtap1hf" path="res://camera.gd" id="1_e2o6t"]
+[ext_resource type="Script" uid="uid://d1742mlainwmm" path="res://cube.gd" id="2_feb5d"]
 
 [sub_resource type="Shader" id="Shader_wc25x"]
 code = "shader_type sky;
@@ -62,9 +62,12 @@ process_mode = 1
 background_mode = 2
 background_color = Color(0.0862745, 0.443137, 1, 1)
 sky = SubResource("Sky_vdcye")
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.0
 glow_intensity = 4.53
 glow_strength = 2.0
 glow_bloom = 0.95
+fog_density = 0.3574
 
 [node name="Game" type="Node3D"]
 
@@ -77,13 +80,15 @@ transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -
 [node name="Camera" type="Camera3D" parent="CameraPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 2.98023e-07, 0, -2.98023e-08, 1, 0, 0, 6)
 fov = 90.0
-script = ExtResource("1_yoqpr")
+script = ExtResource("1_e2o6t")
 
 [node name="Cube" type="MeshInstance3D" parent="."]
-script = ExtResource("2_6bvn0")
+script = ExtResource("2_feb5d")
 
 [node name="DirectionalLight3D_1" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
+visible = false
 
 [node name="DirectionalLight3D_2" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, -0.5, -0.5, -5, -5, -5)
+visible = false

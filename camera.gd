@@ -37,6 +37,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	# debug
+	# print(Engine.get_frames_per_second())
+	
 	update_camera_position(delta)
 
 
@@ -93,7 +96,7 @@ func process_mouse_motion() -> void:
 				pieces.append(parent_object)
 				planes.append(hit_object)
 
-# Выполнение RayCast и возврат результата
+
 func ray_cast() -> Dictionary:
 	var space_state = get_world_3d().direct_space_state
 	var mouse_position = get_viewport().get_mouse_position()
@@ -101,7 +104,7 @@ func ray_cast() -> Dictionary:
 	var origin = project_ray_origin(mouse_position)
 	var end = origin + project_ray_normal(mouse_position) * RAY_LENGTH
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
-
+	
 	return space_state.intersect_ray(query)
 
 # Сброс выбранных объектов
