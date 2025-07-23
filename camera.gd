@@ -6,17 +6,13 @@ const ROTATION_SPEED: float = 0.01
 # Вес интерполяции
 const INTERPOLATION_WEIGHT: float = 10.0
 
-# Максимальное значение изменения координат мыши при повороте за кадр
+# Максимальное значение изменения координат при повороте за кадр
 const MAX_DELTA: float = 20.0
 
 var local_rotation: Vector3
 
 # Длинна луча
 const RAY_LENGTH = 100
-
-# Флаги для отслеживания состояния нажатия кнопок мыши
-var lmb_mouse_pressed: bool = false
-var rmb_mouse_pressed: bool = false
 
 # Расстояние камеры от центра сцены (кубика)
 var distance: float = 6.0
@@ -31,6 +27,7 @@ var planes: Array[MeshInstance3D] = []
 @onready var cube: MeshInstance3D = $"../../Cube"
 @onready var camera_pivot: Marker3D = $".."
 
+var is_swiping_on_cube: bool = false
 
 func _ready() -> void:
 	local_rotation = Vector3(camera_pivot.rotation.y, camera_pivot.rotation.x, camera_pivot.rotation.z)
@@ -41,54 +38,48 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			lmb_mouse_pressed = event.pressed
-			# Если ЛКМ нажата
-			if lmb_mouse_pressed:
-				process_mouse_click()
-			# Если ЛКМ отжата
-			else:
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			is_swiping_on_cube = detect_touch_on_cube()
+		else:
+			if is_swiping_on_cube:
 				if pieces.size() == 2:
 					cube.detect_rotate(pieces, planes)
-				
 				reset_selection()
-		
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			rmb_mouse_pressed = event.pressed
 	
-	elif event is InputEventMouseMotion:
-		if lmb_mouse_pressed:
-			process_mouse_motion()
-		elif rmb_mouse_pressed:
+	elif event is InputEventScreenDrag:
+		if is_swiping_on_cube:
+			process_cube_swipe()
+		else:
 			rotate_camera(event)
 
-	if Input.is_action_pressed("zoom_in"):
-		zoom_in()
-	elif Input.is_action_pressed("zoom_out"):
-		zoom_out()
+	#if Input.is_action_pressed("zoom_in"):
+		#zoom_in()
+	#elif Input.is_action_pressed("zoom_out"):
+		#zoom_out()
 
-# Обработка клика ЛКМ
-func process_mouse_click() -> void:
+# Проверка, попадает ли касание на кубик
+func detect_touch_on_cube() -> bool:
 	var result = ray_cast()
 	
 	if result:
 		var hit_object = result["collider"].get_parent()
 		var parent_object = hit_object.get_parent()
-		
 		pieces.append(parent_object)
 		planes.append(hit_object)
+		return true
+	
+	return false
 
-# Обработка движения ЛКМ по кубику
-func process_mouse_motion() -> void:
+
+# Обработка свайпа по кубику
+func process_cube_swipe() -> void:
 	var result = ray_cast()
 	
 	if result:
 		if pieces.size() < 2:
 			var hit_object = result["collider"].get_parent()
 			var parent_object = hit_object.get_parent()
-			
-			# Проверяем, что объект ещё не добавлен и не является основным управляющим объектом
 			if !pieces.has(parent_object) and parent_object != self:
 				pieces.append(parent_object)
 				planes.append(hit_object)
@@ -101,11 +92,12 @@ func ray_cast() -> Dictionary:
 	var origin = project_ray_origin(mouse_position)
 	var end = origin + project_ray_normal(mouse_position) * RAY_LENGTH
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
-
+	
 	return space_state.intersect_ray(query)
 
 # Сброс выбранных объектов
 func reset_selection() -> void:
+	is_swiping_on_cube = false
 	pieces.clear()
 	planes.clear()
 
