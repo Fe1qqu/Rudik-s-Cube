@@ -1,5 +1,18 @@
 extends Camera3D
 
+
+
+# Минимальная длина линии для её активации (в пикселях)
+const MIN_LINE_LENGTH: float = 50.0
+
+# Хранение начальной и текущей позиций мыши для линии
+var mouse_start_position: Vector2 = Vector2.ZERO
+var mouse_current_position: Vector2 = Vector2.ZERO
+var is_drawing_line: bool = false
+
+@onready var debug_line: Line2D = $"../../DebugLine"
+
+
 const CAMERA_ROTATION_SPEED: float = 0.01  # Speed of camera rotation
 const INTERPOLATION_WEIGHT: float = 10.0  # Smoothing factor for camera movement
 const MAX_DELTA: float = 20.0  # Maximum mouse movement per frame for rotation
@@ -56,12 +69,17 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 		is_left_mouse_button_pressed = event.pressed
 		
 		if is_left_mouse_button_pressed:
-			_process_mouse_click()
+			is_drawing_line = true
+			debug_line.visible = true
+			mouse_start_position = get_viewport().get_mouse_position()
+			mouse_current_position = mouse_start_position
+			_process_mouse_click()  # Проверяем попадание по кубику
 		else:
-			# Trigger cube rotation when two pieces are selected
+			is_drawing_line = false
+			debug_line.visible = false
+			debug_line.clear_points()
 			if selected_pieces.size() == 2:
 				cube.detect_rotate(selected_pieces, selected_planes)
-			
 			_reset_selection()
 	
 	elif event.button_index == MOUSE_BUTTON_RIGHT:
@@ -81,20 +99,39 @@ func _process_mouse_click() -> void:
 	if result:
 		var hit_object = result["collider"].get_parent()
 		var parent_object = hit_object.get_parent()
-		_add_selection(parent_object, hit_object)
+		
+		# Добавляем только если это не сама камера и ещё не выбрана часть
+		if parent_object != self and selected_pieces.size() == 0:
+			_add_selection(parent_object, hit_object)
 
 # Handle mouse motion for selecting additional objects
 func _process_mouse_motion() -> void:
-	var result = _ray_cast()
-	
-	if result:
-		if selected_pieces.size() < 2:
-			var hit_object = result["collider"].get_parent()
-			var parent_object = hit_object.get_parent()
-			
-			# Check that the object has not yet been added and is not the main control object
-			if not selected_pieces.has(parent_object) and parent_object != self:
-				_add_selection(parent_object, hit_object)
+	if is_left_mouse_button_pressed and is_drawing_line:
+		mouse_current_position = get_viewport().get_mouse_position()
+		
+		# Если кубик ещё не выбран, проверяем попадание
+		if selected_pieces.size() == 0:
+			var result = _ray_cast()
+			if result:
+				var hit_object = result["collider"].get_parent()
+				var parent_object = hit_object.get_parent()
+				if parent_object != self:
+					_add_selection(parent_object, hit_object)
+					# Устанавливаем начальную точку линии в текущей позиции
+					mouse_start_position = mouse_current_position
+					debug_line.visible = true
+					debug_line.clear_points()
+					debug_line.add_point(mouse_start_position)
+					debug_line.add_point(mouse_current_position)
+		
+		# Обновляем линию, если кубик выбран и длина достаточна
+		if selected_pieces.size() > 0:
+			var line_length = mouse_start_position.distance_to(mouse_current_position)
+			if line_length >= MIN_LINE_LENGTH:
+				debug_line.clear_points()
+				debug_line.add_point(mouse_start_position)
+				debug_line.add_point(mouse_current_position)
+				print("Line length: ", line_length)
 
 # Perform a raycast from the mouse position
 func _ray_cast() -> Dictionary:
